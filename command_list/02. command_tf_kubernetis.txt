@@ -1,0 +1,11 @@
+# Ensure Minikube is running before running your Terraform commands manually.
+minikube profile list
+
+# Initial Deployment with Terraform:
+terraform init
+terraform apply
+
+# Making Changes in YAML:
+kubectl apply -f deployment.yaml
+
+# If you want to keep Terraform in sync, update the corresponding main.tf resource to reflect the new state.
