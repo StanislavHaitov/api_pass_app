@@ -1,0 +1,56 @@
+pipeline {
+    agent any
+
+    environment {
+        ANSIBLE_PLAYBOOK = '/home/shaitov/api_pass_app/start_minikube.yml'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Clone your GitHub repository containing the Ansible playbook
+                git 'https://github.com/StanislavHaitov/api_pass_app.git'
+            }
+        }
+
+        stage('Set Up Ansible') {
+            steps {
+                script {
+                    // Install Ansible if not already installed
+                    sh '''
+                    if ! command -v ansible &> /dev/null
+                    then
+                        echo "Ansible not found, installing..."
+                        sudo apt-get update
+                        sudo apt-get install ansible -y
+                    else
+                        echo "Ansible is already installed."
+                    fi
+                    '''
+                }
+            }
+        }
+
+        stage('Check Minikube State') {
+            steps {
+                script {
+                    // Run the Ansible playbook to check the state of Minikube
+                    sh "ansible-playbook ${ANSIBLE_PLAYBOOK}"
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Actions to perform after the pipeline finishes
+            echo 'Pipeline finished.'
+        }
+        success {
+            echo 'Pipeline succeeded.'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
+}
