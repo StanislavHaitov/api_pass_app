@@ -1,0 +1,59 @@
+---
+- name: Ensure Minikube and kubectl are installed, and configure Minikube profile
+  hosts: localhost
+  become: yes
+  tasks:
+
+    - name: Check if Minikube is installed
+      command: minikube version
+      register: minikube_installed
+      ignore_errors: yes
+
+    - name: Install prerequisites for Minikube
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - curl
+        - apt-transport-https
+        - virtualbox
+      when: minikube_installed.failed
+
+    - name: Download and install Minikube
+      command: >
+        curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 &&
+        chmod +x minikube &&
+        sudo mv minikube /usr/local/bin/
+      when: minikube_installed.failed
+
+    - name: Check if kubectl is installed
+      command: kubectl version --client
+      register: kubectl_installed
+      ignore_errors: yes
+
+    - name: Download and install kubectl if not installed
+      command: >
+        curl -LO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" &&
+        chmod +x kubectl &&
+        sudo mv kubectl /usr/local/bin/
+      when: kubectl_installed.failed
+
+    - name: Verify installation
+      command: "{{ item }}"
+      loop:
+        - minikube version
+        - kubectl version --client
+      ignore_errors: no
+
+    - name: Check if Minikube profile "project-app" exists
+      command: minikube profile list
+      register: minikube_profiles
+      ignore_errors: true
+
+    - name: Create Minikube profile "project-app" with 5 nodes if it doesn't exist
+      command: minikube start --profile=project-app --nodes=5
+      when: "'project-app' not in minikube_profiles.stdout"
+
+    - name: Ensure Minikube profile "project-app" has 5 nodes
+      command: minikube node add --profile=project-app --nodes=5
+      when: "'project-app' in minikube_profiles.stdout and (minikube_profiles.stdout | regex_findall('project-app')).count() < 5"
