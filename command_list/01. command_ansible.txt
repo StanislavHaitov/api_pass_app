@@ -1,0 +1,6 @@
+# install ansible
+sudo apt-get install ansible -y
+# verify and install minikube and kubectl using ansible - will ask sudo password at the beginning.
+ansible-playbook start_minikube.yml --ask-become-pass
+# this version will run without sudo permission.
+ansible-playbook start_minikube.yml
