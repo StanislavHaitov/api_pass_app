@@ -1,0 +1,27 @@
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_eks_cluster" "passapp" {
+  name     = "passapp-cluster"
+  role_arn  = "arn:aws:iam::123456789012:role/eks-cluster-role"
+  version   = "1.21"
+
+  vpc_config {
+    subnet_ids = ["subnet-12345678", "subnet-87654321"]
+  }
+}
+
+
+resource "aws_eks_node_group" "passapp_nodes" {
+  cluster_name    = aws_eks_cluster.passapp.name
+  node_group_name = "passapp-nodes"
+  node_role_arn   = "arn:aws:iam::123456789012:role/eks-node-role"
+  subnet_ids      = ["subnet-12345678", "subnet-87654321"]
+
+  scaling_config {
+    desired_size = 2
+    max_size     = 3
+    min_size     = 1
+  }
+}
