@@ -48,12 +48,14 @@
     - name: Check if Minikube profile "project-app" exists
       command: minikube profile list
       register: minikube_profiles
-      ignore_errors: true
+      failed_when: false  # Don't fail the task if the command returns a non-zero exit code
+      changed_when: false  # Prevent Ansible from marking the task as changed
 
-    - name: Create Minikube profile "project-app" with 5 nodes if it doesn't exist
-      command: minikube start --profile=project-app --nodes=5
-      when: "'project-app' not in minikube_profiles.stdout"
+    - name: Check if "project-app" profile is in the list
+      set_fact:
+        profile_exists: "{{ 'project-app' in minikube_profiles.stdout }}"
 
-    - name: Ensure Minikube profile "project-app" has 5 nodes
-      command: minikube node add --profile=project-app --nodes=5
-      when: "'project-app' in minikube_profiles.stdout and (minikube_profiles.stdout | regex_findall('project-app')).count() < 5"
+    - name: Create Minikube profile "project-app" if it doesn't exist
+      command: minikube start -p project-app -n 5
+      when: not profile_exists
+      become: false  # Ensure the command is run as a non-root user
