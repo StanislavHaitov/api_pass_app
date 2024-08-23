@@ -4,7 +4,7 @@ kind: Deployment                     # Indicates the type of Kubernetes object b
 metadata:
   name: passapp-deployment          # The name of the Deployment
 spec:
-  replicas: 1                        # Number of Pod replicas to be created, changed to 1
+  replicas: 2                        # Number of Pod replicas to be created, changed to 1
   selector:
     matchLabels:
       app: passapp                  # The Deployment will manage Pods labeled with 'app: pass_app'
@@ -13,7 +13,7 @@ spec:
       labels:
         app: passapp                # The Pods will be labeled with 'app: pass_app'
     spec:
-      containers:
+      container:
       - name: passapp               # The name of the container
         image: stanislavhaitov/pass_app:latest  # The Docker image to be used for the container
         ports:
