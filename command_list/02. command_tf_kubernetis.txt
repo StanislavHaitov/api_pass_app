@@ -9,3 +9,11 @@ terraform apply
 kubectl apply -f deployment.yaml
 
 # If you want to keep Terraform in sync, update the corresponding main.tf resource to reflect the new state.
+
+# After deployment find the NodePort that is assigned to your service.
+kubectl get svc passapp -o jsonpath='{.spec.ports[0].nodePort}'
+
+# Once you have the Minikube IP and the NodePort, you can access your app
+http://<minikube-ip>:<node-port>
+# For example:
+http://192.168.58.2:31606/password/
