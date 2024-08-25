@@ -1,0 +1,8 @@
+# To find the Minikube IP and NodePort that is assigned to your service:
+minikube -p project-app ip
+kubectl get svc passapp -o jsonpath='{.spec.ports[0].nodePort}'
+
+# Once you have the Minikube IP and the NodePort, you can access your app
+http://<minikube-ip>:<node-port>/password/
+# For example:
+http://192.168.58.2:31606/password/
