@@ -6,3 +6,6 @@ kubectl get svc passapp -o jsonpath='{.spec.ports[0].nodePort}'
 http://<minikube-ip>:<node-port>/password/
 # For example:
 http://192.168.58.2:31606/password/
+
+# After PC reboot, need restart Minikube profile:
+minikube -p project-app start
