@@ -1,48 +1,30 @@
 pipeline {
     agent any
 
+    environment {
+    }
+    
     stages {
-        stage('Setup') {
+        stage('Build') {
             steps {
-                echo "Setting up environment..."
-                // Common setup steps for all branches
+                echo 'Building... '
             }
         }
-
-        stage('Production Only Steps') {
-            when {
-                branch 'production'
-            }
+        stage('Test') {
             steps {
-                echo "Running steps on production branch..."
-                // Steps that should only run on the production branch
+                echo 'Testing...'
             }
         }
-
-        stage('Non-Production Steps') {
-            when {
-                not {
-                    branch 'production'
-                }
-            }
+        stage('Deploy') {
             steps {
-                echo "Running steps on non-production branches..."
-                // Steps that should run on all other branches
-            }
-        }
-
-        stage('Common Steps') {
-            steps {
-                echo "Running common steps for all branches..."
-                // Steps that should run on all branches
+                echo 'Deploying...'
             }
         }
     }
-
+   
     post {
         always {
-            echo "Cleaning up..."
-            // Post steps, if any, like cleanup
+            echo 'Cleaning up...'
         }
-    }
+    }           
 }
