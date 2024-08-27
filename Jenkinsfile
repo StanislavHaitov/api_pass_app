@@ -6,7 +6,7 @@ pipeline {
         DOCKER_CREDENTIALS_ID = "dockerhub-credentials-id"
         KUBECONFIG = "~/.kube/config"
         EMAIL_ADDR = credentials('email-address-id')
-        GIT_REPO_URL = 'git@github.com:StanislavHaitov/api_pass_app.git'
+        GIT_REPO_URL = 'https://github.com/StanislavHaitov/api_pass_app.git'
         GIT_CREDENTIALS_ID = 'github-credentials-id'
     }
 
@@ -15,8 +15,8 @@ pipeline {
             steps {
                 script {
                     // Checkout the repository
-                    echo 'Checking out the repository...'
-                    git credentialsId: GIT_CREDENTIALS_ID, url: GIT_REPO_URL
+                    echo "Checking out the repository from branch: ${BRANCH_NAME}"
+                    git credentialsId: GIT_CREDENTIALS_ID, url: GIT_REPO_URL, branch: BRANCH_NAME
                     
                     echo 'Building the Python application...'
                     
