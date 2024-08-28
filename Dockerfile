@@ -11,8 +11,9 @@ WORKDIR /app
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the application code
+# Copy the application code and test file
 COPY pass_app.py ./
+COPY test_pass_app.py ./
 
 # Specify the command to run your application
 CMD ["python", "pass_app.py"]
