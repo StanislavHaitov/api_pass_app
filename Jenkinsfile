@@ -42,7 +42,8 @@ pipeline {
             when {
                 allOf {
                     branch 'production'
-                    changeRequest target: 'production'
+                    // Uncomment the following line if you want to add merge condition
+                    // changeRequest target: 'production'
                 }
             }
             steps {
