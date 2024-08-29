@@ -66,25 +66,26 @@ pipeline {
     }
 
     post {
-    always {
-        echo 'Cleaning up...'
-        cleanWs()
-    }
-    success {
-        script {
-            withCredentials([string(credentialsId: 'email-address-id', variable: 'SECURE_EMAIL_ADDR')]) {
-                mail to: SECURE_EMAIL_ADDR,
-                     subject: "Build Success: ${env.JOB_NAME} for branch: ${env.BRANCH_NAME}",
-                     body: "The build for ${env.JOB_NAME} succeeded!"
+        always {
+            echo 'Cleaning up...'
+            cleanWs()
+        }
+        success {
+            script {
+                withCredentials([string(credentialsId: 'email-address-id', variable: 'SECURE_EMAIL_ADDR')]) {
+                    mail to: SECURE_EMAIL_ADDR,
+                        subject: "Build Success: ${env.JOB_NAME} for branch: ${env.BRANCH_NAME}",
+                        body: "The build for ${env.JOB_NAME} succeeded!"
+                }
             }
         }
-    }
-    failure {
-        script {
-            withCredentials([string(credentialsId: 'email-address-id', variable: 'SECURE_EMAIL_ADDR')]) {
-                mail to: SECURE_EMAIL_ADDR,
-                     subject: "Build Failure: ${env.JOB_NAME} for branch: ${env.BRANCH_NAME}",
-                     body: "The build for ${env.JOB_NAME} failed. Please check Jenkins for details."
+        failure {
+            script {
+                withCredentials([string(credentialsId: 'email-address-id', variable: 'SECURE_EMAIL_ADDR')]) {
+                    mail to: SECURE_EMAIL_ADDR,
+                        subject: "Build Failure: ${env.JOB_NAME} for branch: ${env.BRANCH_NAME}",
+                        body: "The build for ${env.JOB_NAME} failed. Please check Jenkins for details."
+                }
             }
         }
     }
