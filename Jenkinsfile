@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = "stanislavhaitov/pass_app"
         DOCKER_CREDENTIALS_ID = "dockerhub-credentials-id"
-        KUBECONFIG = "~/.kube/config"
+        KUBECONFIG = "/root/.kube/config"
         EMAIL_ADDR = credentials('email-address-id')
         GIT_REPO_URL = 'git@github.com:StanislavHaitov/api_pass_app.git'
         GIT_CREDENTIALS_ID = 'github-credentials-id'
