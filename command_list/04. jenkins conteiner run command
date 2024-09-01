@@ -26,6 +26,8 @@ docker run \
   --volume jenkins-data:/var/jenkins_home \
   --volume jenkins-docker-certs:/certs/client:ro \
   --volume /home/stanislav-haitov/.kube:/root/.kube \
+  --volume /home/stanislav-haitov/.minikube:/root/.minikube \
+  --volume /home/stanislav-haitov/.ssh:/root/.ssh \
   --volume /var/run/docker.sock:/var/run/docker.sock \
   jenkins_with_docker:one
 
