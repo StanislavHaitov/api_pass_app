@@ -39,37 +39,42 @@ pipeline {
         }
 
         stage('Deploy') {
-            when {
-                allOf {
-                    branch 'production'
-                    // Uncomment the following line if you want to add merge condition
-                    // changeRequest target: 'production'
-                }
-            }
-            steps {
-                script {
-                    echo 'Deploying to Minikube...'
-                    
-                    // Tag the tested image as 'latest' and push it to Docker Hub
-                    sh "docker tag $DOCKER_IMAGE:build-${env.BUILD_NUMBER} $DOCKER_IMAGE:latest"
-                    sh "docker push $DOCKER_IMAGE:latest"
-                    
-                    def deployCommands = '''
-                    # Use kubectl to apply Kubernetes manifests
-                    kubectl --kubeconfig=$KUBECONFIG apply -f deployment.yml
-                    
-                    # Get Minikube IP and NodePort
-                    minikubeIp=$(minikube -p project-app ip)
-                    nodePort=$(kubectl --kubeconfig=$KUBECONFIG get svc passapp-service -o jsonpath='{.spec.ports[0].nodePort}')
-                    echo "Application is accessible at http://${minikubeIp}:${nodePort}/password/"                    '''
-                    
-                    // Use SSH to execute the commands on the remote PC
-                    sshagent(['ssh-remote-key']) {
-                        sh "ssh stanislav-haitov@192.168.1.126 '${deployCommands}'"
-                    }
-                }
+    when {
+        allOf {
+            branch 'production'
+            // Uncomment the following line if you want to add merge condition
+            // changeRequest target: 'production'
+        }
+    }
+    steps {
+        script {
+            echo 'Deploying to Minikube...'
+
+            // Tag the tested image as 'latest' and push it to Docker Hub
+            sh "docker tag $DOCKER_IMAGE:build-${env.BUILD_NUMBER} $DOCKER_IMAGE:latest"
+            sh "docker push $DOCKER_IMAGE:latest"
+
+            // Write the deployment script to a file
+            writeFile file: 'deploy_script.sh', text: '''
+            #!/bin/bash
+            echo "Applying Kubernetes manifests..."
+            kubectl --kubeconfig=$KUBECONFIG apply -f /path/to/deployment.yml
+            
+            echo "Fetching Minikube IP and NodePort..."
+            minikubeIp=$(minikube -p project-app ip)
+            nodePort=$(kubectl --kubeconfig=$KUBECONFIG get svc passapp-service -o jsonpath='{.spec.ports[0].nodePort}')
+            
+            echo "Application is accessible at http://${minikubeIp}:${nodePort}/password/"
+            '''
+
+            // Use SSH to copy the script to the remote machine and execute it
+            sshagent(['ssh-remote-key']) {
+                sh "scp deploy_script.sh stanislav-haitov@192.168.1.126:/tmp/deploy_script.sh"
+                sh "ssh stanislav-haitov@192.168.1.126 'chmod +x /tmp/deploy_script.sh && /tmp/deploy_script.sh'"
             }
         }
+    }
+}
     }          
     post {
         always {
