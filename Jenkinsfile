@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = "stanislavhaitov/pass_app"
         DOCKER_CREDENTIALS_ID = "dockerhub-credentials-id"
-        KUBECONFIG = "/root/.kube/config"
+        KUBECONFIG = "~/.kube/config"
         EMAIL_ADDR = credentials('email-address-id')
         GIT_REPO_URL = 'git@github.com:StanislavHaitov/api_pass_app.git'
         GIT_CREDENTIALS_ID = 'github-credentials-id'
@@ -49,23 +49,28 @@ pipeline {
             steps {
                 script {
                     echo 'Deploying to Minikube...'
+                    
                     // Tag the tested image as 'latest' and push it to Docker Hub
                     sh "docker tag $DOCKER_IMAGE:build-${env.BUILD_NUMBER} $DOCKER_IMAGE:latest"
                     sh "docker push $DOCKER_IMAGE:latest"
                     
-                    // Use kubectl to apply Kubernetes manifests
-                    sh "kubectl --kubeconfig=$KUBECONFIG apply -f deployment.yml"
+                    def deployCommands = '''
+                    # Use kubectl to apply Kubernetes manifests
+                    kubectl --kubeconfig=$KUBECONFIG apply -f deployment.yml
                     
-                    // Get Minikube IP and NodePort
-                    def minikubeIp = sh(script: "minikube -p project-app ip", returnStdout: true).trim()
-                    def nodePort = sh(script: "kubectl --kubeconfig=$KUBECONFIG get svc passapp-service -o jsonpath='{.spec.ports[0].nodePort}'", returnStdout: true).trim()
+                    # Get Minikube IP and NodePort
+                    minikubeIp=$(minikube -p project-app ip)
+                    nodePort=$(kubectl --kubeconfig=$KUBECONFIG get svc passapp-service -o jsonpath='{.spec.ports[0].nodePort}')
+                    echo "Application is accessible at http://${minikubeIp}:${nodePort}/password/"                    '''
                     
-                    echo "Application is accessible at http://${minikubeIp}:${nodePort}/password/"
+                    // Use SSH to execute the commands on the remote PC
+                    sshagent(['ssh-remote-key']) {
+                        sh "ssh stanislav-haitov@192.168.1.126 '${deployCommands}'"
+                    }
                 }
             }
         }
-    }
-
+    }          
     post {
         always {
             echo 'Cleaning up...'
