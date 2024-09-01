@@ -13,7 +13,7 @@ spec:
       labels:
         app: passapp                # The Pods will be labeled with 'app: pass_app'
     spec:
-      container:
+      containers:
       - name: passapp               # The name of the container
         image: stanislavhaitov/pass_app:latest  # The Docker image to be used for the container
         ports:
