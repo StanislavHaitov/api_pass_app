@@ -8,7 +8,8 @@ app = Flask(__name__)
 passwords = [
     {"id": 1, "username": "example.com", "password": "password123"},
     {"id": 2, "username": "github.com", "password": "securepass456"},
-    {"id": 3, "username": "email.com", "password": "emailpass789"}
+    {"id": 3, "username": "email.com", "password": "emailpass789"},
+    {"id": 4, "username": "hard.work", "password": "sucsses"}
 ]
 
 # Route to get all passwords
