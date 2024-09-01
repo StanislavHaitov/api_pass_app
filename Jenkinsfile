@@ -58,7 +58,7 @@ pipeline {
             writeFile file: 'deploy_script.sh', text: '''
             #!/bin/bash
             echo "Applying Kubernetes manifests..."
-            kubectl --kubeconfig=$KUBECONFIG apply -f /path/to/deployment.yml
+            kubectl --kubeconfig=$KUBECONFIG apply -f ~/api_pass_app/deployment.yaml
             
             echo "Fetching Minikube IP and NodePort..."
             minikubeIp=$(minikube -p project-app ip)
