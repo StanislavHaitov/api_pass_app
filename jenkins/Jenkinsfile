@@ -18,11 +18,7 @@ pipeline {
                     echo "Checking out the repository from branch: ${env.BRANCH_NAME}"
                     git credentialsId: GIT_CREDENTIALS_ID, url: GIT_REPO_URL, branch: env.BRANCH_NAME
                     // Build the Docker image
-                    withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh "docker login -u $DOCKER_USER -p $DOCKER_PASS"
-                        sh "docker build -t $DOCKER_IMAGE:build-${env.BUILD_NUMBER} ."
-                        sh "docker push $DOCKER_IMAGE:build-${env.BUILD_NUMBER}"
-                    }
+                    sh "docker build -t $DOCKER_IMAGE:build-${env.BUILD_NUMBER} ."                   
                 }
             }
         }
@@ -30,8 +26,6 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    // Pull the Docker image for testing
-                    sh "docker pull $DOCKER_IMAGE:build-${env.BUILD_NUMBER}"
                     // Run tests inside the Docker container
                     sh "docker run --rm $DOCKER_IMAGE:build-${env.BUILD_NUMBER} pytest"
                 }
@@ -48,6 +42,12 @@ pipeline {
     }
     steps {
         script {
+            // Push tested image to DockerHub
+            withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                sh "docker login -u $DOCKER_USER -p $DOCKER_PASS"
+                sh "docker push $DOCKER_IMAGE:build-${env.BUILD_NUMBER}"
+            }
+            
             echo 'Deploying to Minikube...'
 
             // Tag the tested image as 'latest' and push it to Docker Hub
@@ -56,7 +56,7 @@ pipeline {
 
             // Use SSH to copy the static deploy script from the project to the remote machine
             sshagent(['ssh-remote-key']) {
-                sh "scp deploy_script.sh stanislav-haitov@192.168.1.126:/tmp/deploy_script.sh"
+                sh "scp scripts/deploy_script.sh stanislav-haitov@192.168.1.126:/tmp/deploy_script.sh"
                 sh "ssh stanislav-haitov@192.168.1.126 'chmod +x /tmp/deploy_script.sh && /tmp/deploy_script.sh'"
             }
         }
