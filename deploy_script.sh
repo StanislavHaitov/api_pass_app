@@ -1,7 +1,6 @@
 #!/bin/bash
     echo "Applying Kubernetes manifests..."
-    minikube stop -p project-app
-    minikube start -p project-app
+    kubectl rollout restart deployment passapp-deployment
     echo "Fetching Minikube IP and NodePort..."
     minikubeIp=$(minikube -p project-app ip)
     nodePort=$(kubectl --kubeconfig=$KUBECONFIG get svc passapp-service -o jsonpath='{.spec.ports[0].nodePort}')
