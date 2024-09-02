@@ -1,20 +1,21 @@
 
-apiVersion: apps/v1                  # Specifies the API version
-kind: Deployment                     # Indicates the type of Kubernetes object being created
+apiVersion: apps/v1                             # Specifies the API version
+kind: Deployment                                # Indicates the type of Kubernetes object being created
 metadata:
-  name: passapp-deployment          # The name of the Deployment
+  name: passapp-deployment                      # The name of the Deployment
 spec:
-  replicas: 2                        # Number of Pod replicas to be created, changed to 1
+  replicas: 2                                   # Number of Pod replicas to be created, changed to 1
   selector:
     matchLabels:
-      app: passapp                  # The Deployment will manage Pods labeled with 'app: pass_app'
+      app: passapp                              # The Deployment will manage Pods labeled with 'app: pass_app'
   template:
     metadata:
       labels:
-        app: passapp                # The Pods will be labeled with 'app: pass_app'
+        app: passapp                            # The Pods will be labeled with 'app: pass_app'
     spec:
       containers:
-      - name: passapp               # The name of the container
+      - name: passapp                           # The name of the container
         image: stanislavhaitov/pass_app:latest  # The Docker image to be used for the container
+        imagePullPolicy: Always                 # This ensures that every time a pod is recreated
         ports:
-        - containerPort: 5000        # The port on the container that will be exposed
+        - containerPort: 5000                   # The port on the container that will be exposed
