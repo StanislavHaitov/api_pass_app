@@ -67,6 +67,7 @@ pipeline {
         always {
             echo 'Cleaning up...'
             cleanWs()
+            sh "docker image prune -a -f"
         }
         success {
             script {
