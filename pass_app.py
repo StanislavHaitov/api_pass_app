@@ -10,7 +10,8 @@ passwords = [
     {"id": 2, "username": "github.com", "password": "securepass456"},
     {"id": 3, "username": "email.com", "password": "emailpass789"},
     {"id": 4, "username": "hard.work", "password": "sucsses"},
-    {"id": 5, "username": "no.work", "password": "lazy"}
+    {"id": 5, "username": "no.work", "password": "lazy"},
+    {"id": 6, "username": "minikube.test", "password": "worked"}
 ]
 
 # Route to get all passwords
