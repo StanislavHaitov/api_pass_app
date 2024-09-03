@@ -2,7 +2,7 @@
 # PassApp DevOps Project
 
 ## Overview
-`PassApp` is a DevOps-oriented project that automates the deployment and management of a Flask application. This project is part of the final project for the DevSecOps course at Bar-Ilan University. It leverages technologies such as Docker, Jenkins, Kubernetes (via Minikube), Terraform, and Ansible to implement continuous integration, delivery, and infrastructure management, focusing on security best practices.
+`PassApp` is a DevOps-oriented project that automates the deployment and management of a Flask application in tranc base flow. This project is part of the final project for the DevSecOps course at Bar-Ilan University. It leverages technologies such as Docker, Jenkins, Kubernetes (via Minikube), Terraform, and Ansible to implement continuous integration, delivery, and infrastructure management, focusing on security best practices.
 
 ## Key Features
 - **Automated CI/CD pipeline** with Jenkins.
