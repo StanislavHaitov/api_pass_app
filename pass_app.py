@@ -11,7 +11,8 @@ passwords = [
     {"id": 3, "username": "email.com", "password": "emailpass789"},
     {"id": 4, "username": "hard.work", "password": "sucsses"},
     {"id": 5, "username": "no.work", "password": "lazy"},
-    {"id": 6, "username": "minikube.test", "password": "worked"}
+    {"id": 6, "username": "minikube.test", "password": "worked"},
+    {"id": 7, "username": "no.go", "password": "go"}
 ]
 
 # Route to get all passwords
