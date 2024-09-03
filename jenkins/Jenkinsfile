@@ -44,7 +44,7 @@ pipeline {
         script {
             // Push tested image to DockerHub
             withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                sh "docker login -u $DOCKER_USER -p $DOCKER_PASS"
+                sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
                 sh "docker push $DOCKER_IMAGE:${env.BRANCH_NAME}-build-${env.BUILD_NUMBER}"
             }
             
@@ -73,18 +73,20 @@ pipeline {
         success {
             script {
                 withCredentials([string(credentialsId: 'email-address-id', variable: 'SECURE_EMAIL_ADDR')]) {
+                    def emailBody = "The build for ${env.JOB_NAME} succeeded!"
                     mail to: SECURE_EMAIL_ADDR,
                         subject: "Build Success: ${env.JOB_NAME} for branch: ${env.BRANCH_NAME}",
-                        body: "The build for ${env.JOB_NAME} succeeded!"
+                        body: emailBody
                 }
             }
         }
         failure {
             script {
                 withCredentials([string(credentialsId: 'email-address-id', variable: 'SECURE_EMAIL_ADDR')]) {
+                    def emailBody = "The build for ${env.JOB_NAME} failed. Please check Jenkins for details."
                     mail to: SECURE_EMAIL_ADDR,
                         subject: "Build Failure: ${env.JOB_NAME} for branch: ${env.BRANCH_NAME}",
-                        body: "The build for ${env.JOB_NAME} failed. Please check Jenkins for details."
+                        body: emailBody
                 }
             }
         }
