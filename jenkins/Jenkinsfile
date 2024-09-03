@@ -57,8 +57,8 @@ pipeline {
 
             // Use SSH to copy the static deploy script from the project to the remote machine
             sshagent(['ssh-remote-key']) {
-                sh "scp scripts/deploy_script.sh stanislav-haitov@192.168.1.126:/tmp/deploy_script.sh"
-                sh "ssh stanislav-haitov@192.168.1.126 'chmod +x /tmp/deploy_script.sh && /tmp/deploy_script.sh'"
+                sh "scp scripts/deploy_script.sh stanislav-haitov@192.168.254.113:/tmp/deploy_script.sh"
+                sh "ssh stanislav-haitov@192.168.254.113 'chmod +x /tmp/deploy_script.sh && /tmp/deploy_script.sh'"
             }
         }
     }
