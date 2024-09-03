@@ -114,8 +114,8 @@ Docker Hub repository: [stanislavhaitov/pass_app](https://hub.docker.com/r/stani
 This project uses a Jenkins pipeline to automate the following tasks:
 1. Clone the GitHub repository.
 2. Build the Docker image and tag it.
-3. Push the Docker image to Docker Hub (with version management).
-4. Run unit tests.
+3. Run unit tests.
+4. Push the Docker image to Docker Hub (with version management).
 5. Deploy to the Kubernetes cluster when changes are pushed to the production branch.
 
 ## Ansible Automation
